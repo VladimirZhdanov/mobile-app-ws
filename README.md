@@ -1,0 +1,1 @@
+Template for Spring-boot JPA project (Monolith)
