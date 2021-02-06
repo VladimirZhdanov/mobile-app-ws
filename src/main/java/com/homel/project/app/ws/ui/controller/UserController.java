@@ -1,17 +1,19 @@
 package com.homel.project.app.ws.ui.controller;
 
+import com.homel.project.app.ws.service.AddressService;
 import com.homel.project.app.ws.service.UserService;
+import com.homel.project.app.ws.shared.dto.AddressDto;
 import com.homel.project.app.ws.shared.dto.UserDto;
 import com.homel.project.app.ws.ui.model.request.UserDetailsRequestModel;
-import com.homel.project.app.ws.ui.model.response.OperationStatusModel;
-import com.homel.project.app.ws.ui.model.response.RequestOperationName;
-import com.homel.project.app.ws.ui.model.response.RequestOperationStatus;
-import com.homel.project.app.ws.ui.model.response.UserRest;
+import com.homel.project.app.ws.ui.model.response.*;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    AddressService addressService;
 
     @GetMapping(path="/{id}", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public UserRest getUser(@PathVariable String id) {
@@ -58,11 +63,11 @@ public class UserController {
 
        // if (userDetails.getFirstName().isEmpty()) throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(userDetails, userDto);
+        ModelMapper modelMapper = new ModelMapper();
+        UserDto userDto = modelMapper.map(userDetails, UserDto.class);
 
         UserDto createdUser = userService.createUser(userDto);
-        BeanUtils.copyProperties(createdUser, returnValue);
+        returnValue = modelMapper.map(createdUser, UserRest.class);
 
         return returnValue;
     }
@@ -95,4 +100,33 @@ public class UserController {
 
         return returnValue;
     }
+
+    @GetMapping(path="/{id}/addresses", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public List<AddressRest> getUserAddresses(@PathVariable String id) {
+
+        List<AddressRest> returnValue = new ArrayList<>();
+        List<AddressDto> addressesDto = addressService.getAddresses(id);
+
+        if (addressesDto != null && !addressesDto.isEmpty()) {
+
+            Type listType = new TypeToken<List<AddressRest>>() {}.getType();
+            returnValue = new ModelMapper().map(addressesDto, listType);
+        }
+
+
+        return  returnValue;
+    }
+
+    @GetMapping(path="/{id}/addresses/{addressId}",
+            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public AddressRest getUserAddresses(@PathVariable String id, @PathVariable String addressId) {
+
+        AddressDto addressDto = addressService.getAddress(addressId);
+        ModelMapper modelMapper = new ModelMapper();
+
+
+
+        return modelMapper.map(addressDto, AddressRest.class);
+    }
+
 }
