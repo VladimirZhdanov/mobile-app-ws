@@ -1,8 +1,8 @@
 package com.homel.project.app.ws.ui.model.response;
 
-import com.homel.project.app.ws.shared.dto.UserDto;
+import org.springframework.hateoas.RepresentationModel;
 
-public class AddressRest {
+public class AddressRest extends RepresentationModel<AddressRest> {
     private String addressId;
     private String city;
     private String country;
