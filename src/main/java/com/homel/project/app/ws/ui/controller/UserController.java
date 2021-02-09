@@ -1,5 +1,6 @@
 package com.homel.project.app.ws.ui.controller;
 
+import com.homel.project.app.ws.io.entity.AddressEntity;
 import com.homel.project.app.ws.service.AddressService;
 import com.homel.project.app.ws.service.UserService;
 import com.homel.project.app.ws.shared.dto.AddressDto;
@@ -41,6 +42,9 @@ public class UserController {
         UserDto userDto = userService.getUserByUserId(id);
 
         BeanUtils.copyProperties(userDto, returnValue);
+
+        Type listType = new TypeToken<List<AddressRest>>() {}.getType();
+        returnValue.setAddresses(new ModelMapper().map(userDto.getAddresses(), listType));
 
         return  returnValue;
     }
