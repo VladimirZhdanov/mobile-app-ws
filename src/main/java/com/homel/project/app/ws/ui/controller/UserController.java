@@ -4,6 +4,7 @@ import com.homel.project.app.ws.service.AddressService;
 import com.homel.project.app.ws.service.UserService;
 import com.homel.project.app.ws.shared.dto.AddressDto;
 import com.homel.project.app.ws.shared.dto.UserDto;
+import com.homel.project.app.ws.ui.model.request.PasswordResetModel;
 import com.homel.project.app.ws.ui.model.request.PasswordResetRequestModel;
 import com.homel.project.app.ws.ui.model.request.UserDetailsRequestModel;
 import com.homel.project.app.ws.ui.model.response.*;
@@ -202,6 +203,28 @@ public class UserController {
         boolean operationResult = userService.requestPasswordReset(passwordResetRequestModel.getEmail());
 
         returnValue.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET.name());
+        returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
+
+        if(operationResult)
+        {
+            returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+        }
+
+        return returnValue;
+    }
+
+    // http://localhost:8080/mobile-app-ws/users/password-reset
+    @CrossOrigin("*") //to work with 8080 + 8090 (2 tomcats)
+    @PostMapping(path = "/password-reset",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public OperationStatusModel resetPassword(@RequestBody PasswordResetModel passwordResetModel) {
+        OperationStatusModel returnValue = new OperationStatusModel();
+
+        boolean operationResult = userService.resetPassword(
+                passwordResetModel.getToken(),
+                passwordResetModel.getPassword());
+
+        returnValue.setOperationName(RequestOperationName.PASSWORD_RESET.name());
         returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
 
         if(operationResult)
