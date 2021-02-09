@@ -1,6 +1,8 @@
 package com.homel.project.app.ws.service.impl;
 
 import com.homel.project.app.ws.exceptions.UserServiceException;
+import com.homel.project.app.ws.io.entity.PasswordResetTokenEntity;
+import com.homel.project.app.ws.io.repositories.PasswordResetTokenRepository;
 import com.homel.project.app.ws.io.repositories.UserRepository;
 import com.homel.project.app.ws.io.entity.UserEntity;
 import com.homel.project.app.ws.service.UserService;
@@ -29,6 +31,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Autowired
     Utils utils;
@@ -153,6 +158,31 @@ public class UserServiceImpl implements UserService {
         }
 
         return returnValue;
+    }
+
+    @Override
+    public boolean requestPasswordReset(String email) {
+        boolean result = false;
+        UserEntity userEntity = userRepository.findByEmail(email);
+
+        if (userEntity == null) {
+            return result;
+        }
+
+        String token = Utils.generatePasswordResetToken(userEntity.getUserId());
+
+        PasswordResetTokenEntity passwordResetTokenEntity = new PasswordResetTokenEntity();
+        passwordResetTokenEntity.setToken(token);
+        passwordResetTokenEntity.setUserDetails(userEntity);
+        passwordResetTokenRepository.save(passwordResetTokenEntity);
+
+        result = new AmazonSES().sendPasswordResetRequest(
+                userEntity.getFirstName(),
+                userEntity.getEmail(),
+                token
+        );
+
+        return result;
     }
 
     @Override
