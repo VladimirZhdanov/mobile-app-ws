@@ -43,6 +43,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers(SecurityConstants.H2_CONSOLE)
                 .permitAll()
+                .antMatchers("/v2/api-docs", "/configuration/**", "/webjars/**", "/swagger*/**", "/springfox*/**")
+                .permitAll()
                 .anyRequest().authenticated()
                 .and().addFilter(getAuthenticationFilter())
                 .addFilter(new AuthorizationFilter(authenticationManager()))
