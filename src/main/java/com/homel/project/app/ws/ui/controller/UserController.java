@@ -175,7 +175,7 @@ public class UserController {
     /*
      * http://localhost:8080/mobile-app-ws/users/email-verification?token=sdfsdf
      * */
-    @CrossOrigin("*") //to work with 8080 + 8090 (2 tomcats)
+    @CrossOrigin(origins = "*") //to work with 8080 + 8090 (2 tomcats)
     @GetMapping(path = "/email-verification",
             produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
     public OperationStatusModel verifyEmailToken(@RequestParam(value = "token") String token) {
@@ -218,7 +218,7 @@ public class UserController {
     }
 
     // http://localhost:8080/mobile-app-ws/users/password-reset
-    @CrossOrigin("*") //to work with 8080 + 8090 (2 tomcats)
+    @CrossOrigin(origins = "*")  //to work with 8080 + 8090 (2 tomcats)
     @PostMapping(path = "/password-reset",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public OperationStatusModel resetPassword(@RequestBody PasswordResetModel passwordResetModel) {

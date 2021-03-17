@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AppProperties {
-
     @Autowired
     private Environment env;
 

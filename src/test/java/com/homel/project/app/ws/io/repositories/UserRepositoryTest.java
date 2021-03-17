@@ -33,6 +33,7 @@ class UserRepositoryTest {
     UserEntity userEntity1;
     UserEntity userEntity2;
     String userId = "testUserId";
+    String userId2 = "testUserId2";
     String encryptedPassword = "userPassword";
     String emailVerificationToken = "emailToken";
     String addressId = "AddressId";
@@ -69,6 +70,95 @@ class UserRepositoryTest {
         assertNotNull(users);
         assertEquals(1, users.size());
         assertEquals(userFirstName, users.get(0).getFirstName());
+    }
+
+    @Test
+    final void testFindUserByLastName() {
+        List<UserEntity> users = userRepository.findUserByLastName(userLastName);
+
+        assertNotNull(users);
+        assertEquals(2, users.size());
+        assertEquals(userLastName, users.get(0).getLastName());
+    }
+
+    @Test
+    final void testFindUserByKeyword() {
+        List<UserEntity> users = userRepository.findUserByKeyword("Fa");
+
+        assertNotNull(users);
+        assertEquals(1, users.size());
+        assertEquals("Fake", users.get(0).getFirstName());
+    }
+
+    @Test
+    final void testFindUserFirstNameAndLastNameByKeyword() {
+        List<Object[]> users = userRepository.findUserFirstNameAndLastNameByKeyword("Fa");
+
+        assertNotNull(users);
+        assertEquals(1, users.size());
+
+        Object[] user = users.get(0);
+        String userFirstName = String.valueOf(user[0]);
+        String userLastName = String.valueOf(user[1]);
+        assertNotNull(userFirstName);
+        assertNotNull(userLastName);
+
+        assertEquals("Fake", userFirstName);
+        assertEquals("God", userLastName);
+    }
+
+    @Test
+    final void testUpdateUserEmailVerificationStatus() {
+        userRepository.updateUserEmailVerificationStatus(false, userId);
+        UserEntity user = userRepository.findByUserId(userId);
+
+        assertNotNull(user);
+
+        assertEquals(false, user.getEmailVerificationStatus());
+
+        userRepository.updateUserEmailVerificationStatus(true, userId);
+
+        user = userRepository.findByUserId(userId);
+
+        assertNotNull(user);
+
+        assertEquals(true, user.getEmailVerificationStatus());
+    }
+
+    @Test
+    final void testFindUserEntityByUserId() {
+        UserEntity user = userRepository.findUserEntityByUserId(userId);
+
+        assertNotNull(user);
+        assertEquals(userFirstName, user.getFirstName());
+    }
+
+    @Test
+    final void testFindUserFirstNameByUserId() {
+        List<Object[]> users = userRepository.findUserFirstNameByUserId(userId);
+        Object[] user = users.get(0);
+        String firstNameLocal = String.valueOf(user[0]);
+
+        assertNotNull(firstNameLocal);
+        assertEquals(userFirstName, firstNameLocal);
+    }
+
+    @Test
+    final void testUpdateUserEmailVerificationStatusByUserId() {
+        userRepository.updateUserEmailVerificationStatusByUserId(false, userId);
+        UserEntity user = userRepository.findByUserId(userId);
+
+        assertNotNull(user);
+
+        assertEquals(false, user.getEmailVerificationStatus());
+
+        userRepository.updateUserEmailVerificationStatusByUserId(true, userId);
+
+        user = userRepository.findByUserId(userId);
+
+        assertNotNull(user);
+
+        assertEquals(true, user.getEmailVerificationStatus());
     }
 
     private List<AddressDto> getAddressesDto() {
@@ -112,7 +202,7 @@ class UserRepositoryTest {
         userEntity2 = new UserEntity();
         userEntity2.setFirstName("Fake");
         userEntity2.setLastName(userLastName);
-        userEntity2.setUserId(userId);
+        userEntity2.setUserId(userId2);
         userEntity2.setEmail(email2);
         userEntity2.setEncryptedPassword(encryptedPassword);
         userEntity2.setEmailVerificationStatus(false);
