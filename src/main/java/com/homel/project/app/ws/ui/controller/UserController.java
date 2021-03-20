@@ -1,6 +1,5 @@
 package com.homel.project.app.ws.ui.controller;
 
-import com.homel.project.app.ws.io.entity.AddressEntity;
 import com.homel.project.app.ws.service.AddressService;
 import com.homel.project.app.ws.service.UserService;
 import com.homel.project.app.ws.shared.dto.AddressDto;
