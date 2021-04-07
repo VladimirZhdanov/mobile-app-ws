@@ -10,9 +10,6 @@ public class UserEntity implements Serializable {
 
     private static final long serialVersionUID = -7949261955411780183L;
 
-    private static final String COMMIT_1 = "blabla";
-    private static final String COMMIT_2 = "blabla2";
-
     @Id
     @GeneratedValue
     private long id;
